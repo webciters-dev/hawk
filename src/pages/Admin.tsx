@@ -491,27 +491,33 @@ const AboutPanel = () => {
 
 // ─── PROCESS PANEL ───
 const ProcessPanel = () => {
-  const { data: steps, refetch } = useProcessSteps();
+  const { data: steps, refetch: refetchItems } = useProcessSteps();
+  const { data: section, refetch: refetchSection } = useSiteSection("process");
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
+  const [pageDesc, setPageDesc] = useState("");
 
   useEffect(() => { if (steps) setItems(steps); }, [steps]);
+  useEffect(() => { if (section) setPageDesc((section.content as any)?.page_description || ""); }, [section]);
 
   const save = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
+    if (section) {
+      const existing = (section.content as any) || {};
+      await client.from("site_sections").update({ content: { ...existing, page_description: pageDesc } }).eq("id", section.id);
+    }
     for (const item of items) {
       await client.from("process_steps").upsert({ id: item.id, step_number: item.step_number, title: item.title, description: item.description, sort_order: item.sort_order });
     }
-    await refetch();
+    await refetchItems();
+    await refetchSection();
     toast({ title: "Saved", description: "Process steps updated." });
   };
 
   const add = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     const num = String(items.length + 1).padStart(2, "0");
     const { data } = await client.from("process_steps").insert({ step_number: num, title: "New Step", description: "Description here", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
@@ -520,7 +526,6 @@ const ProcessPanel = () => {
   const remove = async (id: string) => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     await client.from("process_steps").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
@@ -537,6 +542,10 @@ const ProcessPanel = () => {
           <Button variant="cleanOutline" size="sm" onClick={add}><Plus size={14} /> Add</Button>
           <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
         </div>
+      </div>
+      <div className="space-y-2">
+        <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Page Description (shown on /process page hero)</label>
+        <Textarea value={pageDesc} onChange={(e) => setPageDesc(e.target.value)} rows={3} placeholder="Introductory paragraph for the process page..." />
       </div>
       {items.map((s) => (
         <div key={s.id} className="border border-border rounded-sm p-4 space-y-3">
