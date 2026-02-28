@@ -1,4 +1,4 @@
-import hawkLogo from "@/assets/hawk-logo-light.png";
+import hawkLogo from "@/assets/hawk-logo-official.png";
 
 const Footer = () => {
   return (
