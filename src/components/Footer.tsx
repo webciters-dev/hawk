@@ -1,3 +1,4 @@
+import { Linkedin } from "lucide-react";
 import hawkLogo from "@/assets/logo.png";
 
 const Footer = () => {
@@ -11,7 +12,7 @@ const Footer = () => {
 
         {/* Nav links */}
         <div className="flex items-center justify-center gap-8 mb-10">
-          {["Services", "About", "Process", "Contact"].map((item) => (
+          {["Services", "About", "Process"].map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
@@ -20,6 +21,20 @@ const Footer = () => {
               {item}
             </a>
           ))}
+        </div>
+
+        {/* LinkedIn */}
+        <div className="flex justify-center mb-10">
+          <a
+            href="https://www.linkedin.com/company/hawkvisionstrategies"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-foreground hover:text-primary transition-colors duration-300"
+            aria-label="Follow us on LinkedIn"
+          >
+            <Linkedin size={28} strokeWidth={1.5} />
+            <span className="font-body text-sm font-medium">LinkedIn</span>
+          </a>
         </div>
 
         {/* Divider */}
