@@ -565,25 +565,23 @@ const ProcessPanel = () => {
 const ContactPanel = () => {
   const { data: section, refetch } = useSiteSection("contact");
   const { toast } = useToast();
-  const [form, setForm] = useState({ title: "", subtitle: "", description: "", email: "", cta_text: "" });
+  const [form, setForm] = useState({ title: "", subtitle: "", description: "", email: "", cta_text: "", page_description: "" });
 
   useEffect(() => {
     if (section) {
       const c = section.content as any;
-      setForm({ title: section.title || "", subtitle: section.subtitle || "", description: c?.description || "", email: c?.email || "", cta_text: c?.cta_text || "" });
+      setForm({ title: section.title || "", subtitle: section.subtitle || "", description: c?.description || "", email: c?.email || "", cta_text: c?.cta_text || "", page_description: c?.page_description || "" });
     }
   }, [section]);
 
   const save = async () => {
     if (!section) return;
-
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     await client.from("site_sections").update({
       title: form.title,
       subtitle: form.subtitle,
-      content: { description: form.description, email: form.email, cta_text: form.cta_text },
+      content: { description: form.description, email: form.email, cta_text: form.cta_text, page_description: form.page_description },
     }).eq("id", section.id);
     await refetch();
     toast({ title: "Saved", description: "Contact section updated." });
@@ -595,6 +593,8 @@ const ContactPanel = () => {
         <h2 className="font-display text-lg text-foreground">Contact Section</h2>
         <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
       </div>
+      <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Page Description (shown on /contact page hero)</label>
+      <Textarea value={form.page_description} onChange={(e) => setForm({ ...form, page_description: e.target.value })} rows={3} placeholder="Introductory paragraph for the contact page..." />
       <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Tagline</label>
       <Input value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
       <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Headline</label>
