@@ -1,75 +1,55 @@
 import { motion } from "framer-motion";
-import { Shield, Eye, Zap } from "lucide-react";
-
-const reasons = [
-  {
-    icon: Eye,
-    title: "Hawk-Eye Perspective",
-    description:
-      "We see the full landscape — market dynamics, competitive positioning, and untapped opportunities — so you never enter a deal blind.",
-  },
-  {
-    icon: Shield,
-    title: "Trusted Access",
-    description:
-      "Our relationships are built on decades of integrity. We don't just open doors — we ensure you walk through the right ones.",
-  },
-  {
-    icon: Zap,
-    title: "Accelerated Outcomes",
-    description:
-      "Forget cold outreach. We compress timelines by connecting you directly with decision-makers ready to engage.",
-  },
-];
 
 const WhyUsSection = () => {
   return (
-    <section id="why-us" className="py-24 bg-navy relative overflow-hidden">
-      {/* Subtle pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: "radial-gradient(circle at 2px 2px, hsl(40 55% 50%) 1px, transparent 0)",
-          backgroundSize: "40px 40px",
-        }} />
-      </div>
+    <section id="about" className="py-28 bg-background">
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
+              Why Hawk Vision
+            </p>
+            <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground mb-8">
+              A consultancy experience that goes beyond results
+            </h2>
+            <p className="font-body text-sm text-muted-foreground leading-[1.8] mb-6">
+              At Hawk Vision Strategies, we don't just open doors — we ensure you walk through 
+              the right ones. Our approach is built on decades of trusted relationships, deep 
+              market intelligence, and a commitment to outcomes that endure.
+            </p>
+            <p className="font-body text-sm text-muted-foreground leading-[1.8]">
+              We see the full landscape — market dynamics, competitive positioning, and untapped 
+              opportunities — so our clients never enter a partnership blind.
+            </p>
+          </motion.div>
 
-      <div className="relative container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4 font-medium">
-            Why Hawk Vision
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-cream">
-            Your Strategic Advantage
-          </h2>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-          {reasons.map((reason, i) => (
-            <motion.div
-              key={reason.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.2 }}
-              className="text-center"
-            >
-              <div className="w-16 h-16 rounded-full border-2 border-gold/30 flex items-center justify-center mx-auto mb-6">
-                <reason.icon className="text-gold" size={28} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-10"
+          >
+            {[
+              { number: "100+", label: "Strategic partnerships brokered" },
+              { number: "30+", label: "Industries served globally" },
+              { number: "95%", label: "Client retention rate" },
+            ].map((stat) => (
+              <div key={stat.label} className="border-l-2 border-primary pl-6">
+                <p className="font-display text-4xl font-normal text-crimson mb-1">
+                  {stat.number}
+                </p>
+                <p className="font-body text-sm text-muted-foreground tracking-wide">
+                  {stat.label}
+                </p>
               </div>
-              <h3 className="font-display text-xl font-semibold text-cream mb-4">
-                {reason.title}
-              </h3>
-              <p className="font-body text-cream/60 leading-relaxed">
-                {reason.description}
-              </p>
-            </motion.div>
-          ))}
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

@@ -1,49 +1,40 @@
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Mail, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const ContactSection = () => {
   return (
-    <section id="contact" className="py-24 bg-navy-dark relative overflow-hidden">
-      {/* Gold accent line */}
-      <div className="section-divider absolute top-0 left-0 right-0" />
+    <section id="contact" className="py-28 bg-background">
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="max-w-2xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
+              Contact Us
+            </p>
+            <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground mb-6">
+              Let's start a conversation
+            </h2>
+            <p className="font-body text-sm text-muted-foreground leading-[1.8] mb-10">
+              Every strategic partnership begins with a conversation. 
+              Tell us about your goals and let's explore how we can help.
+            </p>
 
-      <div className="container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center"
-        >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4 font-medium">
-            Get in Touch
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-cream mb-6">
-            Ready to See Further?
-          </h2>
-          <p className="font-body text-cream/60 text-lg leading-relaxed mb-10">
-            Every strategic partnership starts with a conversation. Let's discuss how 
-            Hawk Vision Strategies can unlock your next phase of growth.
-          </p>
-
-          <Button variant="hero" size="lg" className="text-base px-10 py-6 mb-12" asChild>
-            <a href="mailto:info@hawkvisionstrategies.com">
-              Start a Conversation <ArrowRight className="ml-2" size={18} />
+            <a
+              href="mailto:info@hawkvisionstrategies.com"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 font-body text-xs font-medium tracking-[0.2em] uppercase hover:bg-primary/85 transition-all duration-300"
+            >
+              Get in Touch <ArrowRight size={14} />
             </a>
-          </Button>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-cream/50 font-body text-sm">
-            <div className="flex items-center gap-2">
-              <Mail size={16} className="text-gold" />
-              <span>info@hawkvisionstrategies.com</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin size={16} className="text-gold" />
-              <span>Global Reach, Personal Touch</span>
-            </div>
-          </div>
-        </motion.div>
+            <p className="mt-10 font-body text-xs text-muted-foreground tracking-wide">
+              info@hawkvisionstrategies.com
+            </p>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

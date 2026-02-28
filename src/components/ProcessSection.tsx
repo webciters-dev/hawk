@@ -14,7 +14,7 @@ const steps = [
   {
     number: "03",
     title: "Connection",
-    description: "We facilitate warm introductions and structure conversations for impact.",
+    description: "We facilitate warm introductions and structure conversations for maximum impact.",
   },
   {
     number: "04",
@@ -25,57 +25,42 @@ const steps = [
 
 const ProcessSection = () => {
   return (
-    <section id="process" className="py-24 bg-background">
-      <div className="container mx-auto px-6">
+    <section id="process" className="py-28 bg-card">
+      <div className="container mx-auto px-6 lg:px-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.8 }}
+          className="mb-20"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4 font-medium">
-            How We Work
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground">
+          <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
             Our Process
+          </p>
+          <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground">
+            How we work
           </h2>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto relative">
-          {/* Vertical line */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
-
+        <div className="grid md:grid-cols-4 gap-12">
           {steps.map((step, i) => (
             <motion.div
               key={step.number}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.15 }}
-              className={`relative flex items-start gap-8 mb-12 last:mb-0 ${
-                i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-              }`}
             >
-              {/* Number circle */}
-              <div className="relative z-10 flex-shrink-0 w-16 h-16 rounded-full bg-navy border-2 border-gold flex items-center justify-center md:absolute md:left-1/2 md:-translate-x-1/2">
-                <span className="font-display text-lg font-bold text-gold">{step.number}</span>
-              </div>
-
-              {/* Content */}
-              <div className={`flex-1 pt-2 pl-4 md:pl-0 ${
-                i % 2 === 0 ? "md:pr-20 md:text-right" : "md:pl-20 md:text-left"
-              }`}>
-                <h3 className="font-display text-2xl font-semibold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="font-body text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-
-              {/* Spacer for the other side */}
-              <div className="hidden md:block flex-1" />
+              <p className="font-display text-5xl font-normal text-border mb-4">
+                {step.number}
+              </p>
+              <div className="section-line w-8 mb-4" />
+              <h3 className="font-display text-lg font-medium text-foreground mb-3">
+                {step.title}
+              </h3>
+              <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                {step.description}
+              </p>
             </motion.div>
           ))}
         </div>
