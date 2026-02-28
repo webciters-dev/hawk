@@ -32,6 +32,10 @@ const lazyWithRetry = <T extends ComponentType<any>>(
   });
 
 const Index = lazyWithRetry(() => import("./pages/Index"), "retry-route-index");
+const ServicesPage = lazyWithRetry(() => import("./pages/ServicesPage"), "retry-route-services");
+const AboutPage = lazyWithRetry(() => import("./pages/AboutPage"), "retry-route-about");
+const ProcessPage = lazyWithRetry(() => import("./pages/ProcessPage"), "retry-route-process");
+const ContactPage = lazyWithRetry(() => import("./pages/ContactPage"), "retry-route-contact");
 const NotFound = lazyWithRetry(() => import("./pages/NotFound"), "retry-route-not-found");
 const AdminLogin = lazyWithRetry(() => import("./pages/AdminLogin"), "retry-route-admin-login");
 const Admin = lazyWithRetry(() => import("./pages/Admin"), "retry-route-admin");
@@ -53,6 +57,10 @@ const App = () => (
         <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/process" element={<ProcessPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
