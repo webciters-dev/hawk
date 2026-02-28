@@ -102,6 +102,7 @@ const AdminLogin = () => {
             required
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {!error && callbackMessage && <p className="text-sm text-muted-foreground">{callbackMessage}</p>}
           <Button type="submit" className="w-full" variant="clean" disabled={submitting}>
             {submitting ? "Signing in..." : "Sign In"}
           </Button>
