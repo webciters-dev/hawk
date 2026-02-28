@@ -19,12 +19,23 @@ const Admin = () => {
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
-      navigate("/admin/login");
+      navigate("/admin/login", { replace: true });
     }
   }, [loading, user, isAdmin, navigate]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><p className="text-muted-foreground">Loading...</p></div>;
-  if (!isAdmin) return null;
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-6 text-center">
+        <div>
+          <p className="text-foreground font-body mb-2">Checking admin access...</p>
+          <a href="/admin/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            Return to admin login
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const tabs: { key: Tab; label: string }[] = [
     { key: "navigation", label: "Navigation" },
