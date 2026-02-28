@@ -354,20 +354,29 @@ const StatisticsPanel = () => {
   useEffect(() => { if (stats) setItems(stats); }, [stats]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("statistics").upsert({ id: item.id, metric_value: item.metric_value, metric_label: item.metric_label, sort_order: item.sort_order });
+      await client.from("statistics").upsert({ id: item.id, metric_value: item.metric_value, metric_label: item.metric_label, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "Statistics updated." });
   };
 
   const add = async () => {
-    const { data } = await supabase.from("statistics").insert({ metric_value: "0", metric_label: "New Metric", sort_order: items.length + 1 }).select().single();
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("statistics").insert({ metric_value: "0", metric_label: "New Metric", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
 
   const remove = async (id: string) => {
-    await supabase.from("statistics").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("statistics").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
 
