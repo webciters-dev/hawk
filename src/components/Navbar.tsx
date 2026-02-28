@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import hawkLogo from "@/assets/hawk-logo-transparent.png";
+import hawkLogo from "@/assets/logo.png";
 
 const navItems = [
   { label: "Services", href: "#services" },
