@@ -1,4 +1,4 @@
-import hawkLogo from "@/assets/hawk-logo-final.png";
+import hawkLogo from "@/assets/hawk-logo-transparent.png";
 
 const Footer = () => {
   return (
@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 lg:px-12">
         {/* Large centered logo */}
         <div className="flex justify-center mb-10">
-          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-20 object-contain" />
+          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-16 object-contain" />
         </div>
 
         {/* Nav links */}
