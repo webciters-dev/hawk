@@ -14,7 +14,7 @@ const HeroSection = () => {
       </div>
 
       <div className="relative container mx-auto px-6 lg:px-12 pt-32 pb-20">
-        <div className="max-w-4xl">
+        <div className="max-w-full">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -37,7 +37,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-muted-foreground font-body text-base md:text-lg leading-relaxed mb-12 max-w-xl"
+            className="text-muted-foreground font-body text-base md:text-lg leading-relaxed mb-12 max-w-2xl"
           >
             {content?.description || ""}
           </motion.p>
