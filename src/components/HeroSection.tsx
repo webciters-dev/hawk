@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
+import { useSiteSection } from "@/hooks/use-cms-data";
 import heroLight from "@/assets/hero-light.jpg";
 
 const HeroSection = () => {
+  const { data: section } = useSiteSection("hero");
+  const content = section?.content as any;
+
   return (
     <section className="relative min-h-screen flex items-center">
-      {/* Subtle background */}
       <div className="absolute inset-0">
         <img src={heroLight} alt="" className="w-full h-full object-cover opacity-40" />
         <div className="absolute inset-0 bg-background/60" />
@@ -18,7 +21,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-8 font-medium"
           >
-            Strategic Partnerships & Market Development
+            {section?.subtitle || "Strategic Partnerships & Market Development"}
           </motion.p>
 
           <motion.h1
@@ -27,9 +30,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="font-display text-4xl md:text-6xl lg:text-7xl font-normal text-foreground leading-[1.1] mb-8"
           >
-            Connecting you to the{" "}
-            <em className="text-crimson">right people</em>{" "}
-            at the right time
+            {section?.title || "Connecting you to the right people at the right time"}
           </motion.h1>
 
           <motion.p
@@ -38,8 +39,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-muted-foreground font-body text-base md:text-lg leading-relaxed mb-12 max-w-xl"
           >
-            We help organizations unlock strategic growth through trusted partnerships, 
-            market expansion, and ecosystem engagement.
+            {content?.description || ""}
           </motion.p>
 
           <motion.div
@@ -48,19 +48,19 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-wrap gap-4"
           >
-            <a
-              href="#services"
-              className="font-body text-xs font-medium tracking-[0.2em] uppercase text-crimson border-b border-crimson pb-1 hover:opacity-70 transition-opacity"
-            >
-              Our Services
-            </a>
-            <span className="text-border mx-4">|</span>
-            <a
-              href="#contact"
-              className="font-body text-xs font-medium tracking-[0.2em] uppercase text-foreground border-b border-foreground pb-1 hover:opacity-70 transition-opacity"
-            >
-              Contact Us
-            </a>
+            {content?.cta_primary_text && (
+              <a href={content.cta_primary_url || "#services"} className="font-body text-xs font-medium tracking-[0.2em] uppercase text-crimson border-b border-crimson pb-1 hover:opacity-70 transition-opacity">
+                {content.cta_primary_text}
+              </a>
+            )}
+            {content?.cta_secondary_text && (
+              <>
+                <span className="text-border mx-4">|</span>
+                <a href={content.cta_secondary_url || "#contact"} className="font-body text-xs font-medium tracking-[0.2em] uppercase text-foreground border-b border-foreground pb-1 hover:opacity-70 transition-opacity">
+                  {content.cta_secondary_text}
+                </a>
+              </>
+            )}
           </motion.div>
         </div>
       </div>

@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { useNavigationLinks } from "@/hooks/use-cms-data";
 import hawkLogo from "@/assets/logo.png";
-
-const navItems = [
-  { label: "Services", href: "#services" },
-  { label: "About", href: "#about" },
-  { label: "Process", href: "#process" },
-];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { data: links } = useNavigationLinks();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const topLinks = links?.filter((l) => !l.parent_id && !l.is_cta) || [];
+  const ctaLink = links?.find((l) => l.is_cta && !l.parent_id);
+  const getChildren = (parentId: string) => links?.filter((l) => l.parent_id === parentId) || [];
 
   return (
     <nav
@@ -25,61 +25,71 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
-        {/* Logo — left */}
         <a href="#" className="flex-shrink-0">
           <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-12 object-contain" />
         </a>
 
-        {/* Desktop nav — right */}
         <div className="hidden md:flex items-center gap-10">
-          {navItems.map((item) => (
+          {topLinks.map((item) => {
+            const children = getChildren(item.id);
+            return children.length > 0 ? (
+              <div key={item.id} className="relative group">
+                <a
+                  href={item.url}
+                  className="text-muted-foreground hover:text-foreground font-body text-[11px] font-medium tracking-[0.2em] transition-colors duration-300 uppercase inline-flex items-center gap-1"
+                >
+                  {item.title} <ChevronDown size={12} />
+                </a>
+                <div className="absolute top-full left-0 mt-2 bg-card border border-border shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-[180px]">
+                  {children.map((child) => (
+                    <a
+                      key={child.id}
+                      href={child.url}
+                      className="block px-4 py-2 font-body text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    >
+                      {child.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <a
+                key={item.id}
+                href={item.url}
+                className="text-muted-foreground hover:text-foreground font-body text-[11px] font-medium tracking-[0.2em] transition-colors duration-300 uppercase"
+              >
+                {item.title}
+              </a>
+            );
+          })}
+          {ctaLink && (
             <a
-              key={item.label}
-              href={item.href}
-              className="text-muted-foreground hover:text-foreground font-body text-[11px] font-medium tracking-[0.2em] transition-colors duration-300 uppercase"
+              href={ctaLink.url}
+              className="bg-primary text-primary-foreground px-5 py-1.5 font-body text-[11px] font-medium tracking-[0.15em] uppercase hover:bg-primary/85 transition-all duration-300"
             >
-              {item.label}
+              {ctaLink.title}
             </a>
-          ))}
-          <a
-            href="#contact"
-            className="bg-primary text-primary-foreground px-5 py-1.5 font-body text-[11px] font-medium tracking-[0.15em] uppercase hover:bg-primary/85 transition-all duration-300"
-          >
-            Contact Us
-          </a>
+          )}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-foreground"
-          aria-label="Toggle menu"
-        >
+        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-foreground" aria-label="Toggle menu">
           {isOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden bg-card border-t border-border">
           <div className="flex flex-col items-center gap-5 py-8">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="text-muted-foreground hover:text-foreground font-body text-xs tracking-[0.15em] uppercase"
-              >
-                {item.label}
+            {topLinks.map((item) => (
+              <a key={item.id} href={item.url} onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground font-body text-xs tracking-[0.15em] uppercase">
+                {item.title}
               </a>
             ))}
-            <a
-              href="#contact"
-              onClick={() => setIsOpen(false)}
-              className="bg-primary text-primary-foreground px-5 py-2 font-body text-xs font-medium tracking-[0.15em] uppercase mt-2"
-            >
-              Contact Us
-            </a>
+            {ctaLink && (
+              <a href={ctaLink.url} onClick={() => setIsOpen(false)} className="bg-primary text-primary-foreground px-5 py-2 font-body text-xs font-medium tracking-[0.15em] uppercase mt-2">
+                {ctaLink.title}
+              </a>
+            )}
           </div>
         </div>
       )}
