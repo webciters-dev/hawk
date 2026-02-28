@@ -57,6 +57,7 @@ const AdminLogin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setCallbackMessage("");
     setSubmitting(true);
 
     try {
