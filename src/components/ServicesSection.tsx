@@ -20,7 +20,7 @@ const ServicesSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-x-16 gap-y-16 max-w-4xl">
+        <div className="grid md:grid-cols-2 gap-x-16 gap-y-16">
           {services?.map((service, i) => {
             const Icon = iconMap[service.icon_name] || Target;
             return (
