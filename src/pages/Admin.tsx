@@ -234,7 +234,11 @@ const HeroPanel = () => {
 
   const save = async () => {
     if (!section) return;
-    await supabase.from("site_sections").update({
+
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("site_sections").update({
       title: form.title,
       subtitle: form.subtitle,
       content: { description: form.description, cta_primary_text: form.cta_primary_text, cta_primary_url: form.cta_primary_url, cta_secondary_text: form.cta_secondary_text, cta_secondary_url: form.cta_secondary_url },
