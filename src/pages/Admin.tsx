@@ -115,8 +115,11 @@ const NavigationPanel = () => {
   useEffect(() => { if (links) setItems(links); }, [links]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("navigation_links").upsert({
+      await client.from("navigation_links").upsert({
         id: item.id,
         title: item.title,
         url: item.url,
@@ -130,7 +133,10 @@ const NavigationPanel = () => {
   };
 
   const addLink = async () => {
-    const { data } = await supabase.from("navigation_links").insert({
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("navigation_links").insert({
       title: "New Link",
       url: "#",
       sort_order: (items?.length || 0) + 1,
@@ -139,7 +145,10 @@ const NavigationPanel = () => {
   };
 
   const addSublink = async (parentId: string) => {
-    const { data } = await supabase.from("navigation_links").insert({
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("navigation_links").insert({
       title: "New Sublink",
       url: "#",
       parent_id: parentId,
@@ -149,7 +158,10 @@ const NavigationPanel = () => {
   };
 
   const removeLink = async (id: string) => {
-    await supabase.from("navigation_links").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("navigation_links").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id && i.parent_id !== id));
   };
 
