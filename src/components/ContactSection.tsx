@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useSiteSection } from "@/hooks/use-cms-data";
 
-const ContactSection = () => {
+const ContactSection = ({ showHeader = true }: { showHeader?: boolean }) => {
   const { data: section } = useSiteSection("contact");
   const content = section?.content as any;
 
@@ -11,12 +11,16 @@ const ContactSection = () => {
       <div className="container mx-auto px-6 lg:px-12">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
-              {section?.subtitle || "Contact Us"}
-            </p>
-            <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground mb-6">
-              {section?.title || "Let's start a conversation"}
-            </h2>
+            {showHeader && (
+              <>
+                <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
+                  {section?.subtitle || "Contact Us"}
+                </p>
+                <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground mb-6">
+                  {section?.title || "Let's start a conversation"}
+                </h2>
+              </>
+            )}
             <p className="font-body text-sm text-muted-foreground leading-[1.8] mb-10">
               {content?.description || ""}
             </p>
