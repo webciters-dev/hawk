@@ -37,7 +37,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-muted-foreground font-body text-base md:text-lg leading-relaxed mb-12 max-w-2xl"
+            className="text-muted-foreground font-body text-base md:text-lg leading-relaxed mb-12 max-w-4xl"
           >
             {content?.description || ""}
           </motion.p>
