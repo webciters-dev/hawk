@@ -29,9 +29,14 @@ const AdminLogin = () => {
       searchParams.get("type") === "signup" ||
       hashParams.get("type") === "signup" ||
       Boolean(searchParams.get("token_hash")) ||
+      Boolean(searchParams.get("code")) ||
+      Boolean(searchParams.get("error")) ||
       Boolean(hashParams.get("access_token"));
 
-    if (hasAuthCallbackParams) {
+    if (searchParams.get("error") || hashParams.get("error_description")) {
+      const message = searchParams.get("error_description") || hashParams.get("error_description") || "Email callback was invalid. Please sign in manually.";
+      setError(message);
+    } else if (hasAuthCallbackParams) {
       setError("Email confirmed. Please sign in with your password.");
     }
 
