@@ -1,6 +1,9 @@
+import { Link } from "react-router-dom";
 import { Linkedin } from "lucide-react";
 import { useNavigationLinks, useSiteSection } from "@/hooks/use-cms-data";
 import hawkLogo from "@/assets/logo.png";
+
+const isInternalLink = (url: string) => url.startsWith("/") && !url.startsWith("//");
 
 const Footer = () => {
   const { data: links } = useNavigationLinks();
@@ -17,11 +20,17 @@ const Footer = () => {
         </div>
 
         <div className="flex items-center justify-center gap-8 mb-10">
-          {navLinks.map((item) => (
-            <a key={item.id} href={item.url} className="font-body text-[11px] text-muted-foreground hover:text-foreground tracking-[0.15em] uppercase transition-colors">
-              {item.title}
-            </a>
-          ))}
+          {navLinks.map((item) =>
+            isInternalLink(item.url) ? (
+              <Link key={item.id} to={item.url} className="font-body text-[11px] text-muted-foreground hover:text-foreground tracking-[0.15em] uppercase transition-colors">
+                {item.title}
+              </Link>
+            ) : (
+              <a key={item.id} href={item.url} className="font-body text-[11px] text-muted-foreground hover:text-foreground tracking-[0.15em] uppercase transition-colors">
+                {item.title}
+              </a>
+            )
+          )}
         </div>
 
         {content?.linkedin_url && (
