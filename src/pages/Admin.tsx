@@ -460,21 +460,30 @@ const ProcessPanel = () => {
   useEffect(() => { if (steps) setItems(steps); }, [steps]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("process_steps").upsert({ id: item.id, step_number: item.step_number, title: item.title, description: item.description, sort_order: item.sort_order });
+      await client.from("process_steps").upsert({ id: item.id, step_number: item.step_number, title: item.title, description: item.description, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "Process steps updated." });
   };
 
   const add = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     const num = String(items.length + 1).padStart(2, "0");
-    const { data } = await supabase.from("process_steps").insert({ step_number: num, title: "New Step", description: "Description here", sort_order: items.length + 1 }).select().single();
+    const { data } = await client.from("process_steps").insert({ step_number: num, title: "New Step", description: "Description here", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
 
   const remove = async (id: string) => {
-    await supabase.from("process_steps").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("process_steps").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
 
