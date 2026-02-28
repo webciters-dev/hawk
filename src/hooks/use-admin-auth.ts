@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
+import { getBackendClient, type BackendClient } from "@/lib/backend-client";
+
+const AUTH_UNAVAILABLE_ERROR = {
+  message: "Authentication is temporarily unavailable. Please refresh and try again.",
+};
 
 export const useAdminAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -9,10 +13,11 @@ export const useAdminAuth = () => {
 
   useEffect(() => {
     let mounted = true;
+    let unsubscribe: (() => void) | null = null;
 
-    const checkAdminRole = async (userId: string) => {
+    const checkAdminRole = async (client: BackendClient, userId: string) => {
       try {
-        const { data, error } = await supabase.rpc("has_role", {
+        const { data, error } = await client.rpc("has_role", {
           _user_id: userId,
           _role: "admin",
         });
@@ -29,7 +34,7 @@ export const useAdminAuth = () => {
       }
     };
 
-    const hydrateAuthState = async (session: Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"]) => {
+    const hydrateAuthState = async (client: BackendClient, session: Session | null) => {
       if (!mounted) return;
 
       const currentUser = session?.user ?? null;
@@ -41,23 +46,35 @@ export const useAdminAuth = () => {
         return;
       }
 
-      const hasAdminRole = await checkAdminRole(currentUser.id);
+      const hasAdminRole = await checkAdminRole(client, currentUser.id);
       if (!mounted) return;
 
       setIsAdmin(hasAdminRole);
       setLoading(false);
     };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        void hydrateAuthState(session);
-      }
-    );
-
     void (async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        await hydrateAuthState(session);
+        const client = await getBackendClient();
+        if (!mounted) return;
+
+        if (!client) {
+          setUser(null);
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
+
+        const { data } = client.auth.onAuthStateChange((_event, session) => {
+          void hydrateAuthState(client, session);
+        });
+        unsubscribe = () => data.subscription.unsubscribe();
+
+        const {
+          data: { session },
+        } = await client.auth.getSession();
+
+        await hydrateAuthState(client, session);
       } catch (error) {
         console.error("Failed to initialize admin auth:", error);
         if (mounted) {
@@ -75,17 +92,24 @@ export const useAdminAuth = () => {
     return () => {
       mounted = false;
       window.clearTimeout(fallbackTimer);
-      subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const client = await getBackendClient();
+    if (!client) {
+      return { error: AUTH_UNAVAILABLE_ERROR };
+    }
+
+    const { error } = await client.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    const client = await getBackendClient();
+    if (!client) return;
+    await client.auth.signOut();
   };
 
   return { user, isAdmin, loading, signIn, signOut };
