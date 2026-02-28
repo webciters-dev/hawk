@@ -11,6 +11,20 @@ import { useToast } from "@/hooks/use-toast";
 
 type Tab = "navigation" | "hero" | "services" | "about" | "process" | "contact" | "statistics";
 
+const getClientOrToast = async (toast: ReturnType<typeof useToast>["toast"]) => {
+  const client = await getBackendClient();
+  if (!client) {
+    toast({
+      title: "Backend unavailable",
+      description: "Please refresh and try again.",
+      variant: "destructive",
+    });
+    return null;
+  }
+
+  return client;
+};
+
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdminAuth();
   const navigate = useNavigate();
