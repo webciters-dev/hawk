@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import hawkLogo from "@/assets/hawk-logo-final.png";
+import hawkLogo from "@/assets/hawk-logo-transparent.png";
 
 const navItems = [
   { label: "Services", href: "#services" },
@@ -27,7 +27,7 @@ const Navbar = () => {
           scrolled ? "max-h-0 opacity-0" : "max-h-24 opacity-100"
         }`}
       >
-        <div className="container mx-auto px-6 lg:px-12 flex justify-center py-5">
+        <div className="container mx-auto px-6 lg:px-12 flex justify-center py-3">
           <a href="#">
             <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-14 object-contain" />
           </a>
@@ -50,7 +50,7 @@ const Navbar = () => {
               scrolled ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
             }`}
           >
-            <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-8 object-contain" />
+            <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-7 object-contain" />
           </a>
 
           {/* Desktop nav */}
