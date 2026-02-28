@@ -26,16 +26,8 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between h-20 px-6 lg:px-12">
-        <a href="#" className="flex items-center gap-3">
-          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-14 w-14 object-contain" />
-          <div>
-            <span className="font-display text-base font-semibold text-foreground tracking-wide">
-              Hawk Vision
-            </span>
-            <span className="block text-[10px] tracking-[0.25em] uppercase font-body text-muted-foreground">
-              Strategies
-            </span>
-          </div>
+        <a href="#" className="flex items-center">
+          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-12 object-contain" />
         </a>
 
         {/* Desktop nav */}
