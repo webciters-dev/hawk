@@ -34,9 +34,9 @@ export const useSiteSection = (key: string) =>
         .from("site_sections")
         .select("*")
         .eq("section_key", key)
-        .single();
+        .maybeSingle();
       if (error) throw error;
-      return data as SiteSection;
+      return (data as SiteSection | null);
     },
   });
 

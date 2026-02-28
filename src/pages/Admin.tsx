@@ -529,7 +529,11 @@ const ContactPanel = () => {
 
   const save = async () => {
     if (!section) return;
-    await supabase.from("site_sections").update({
+
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("site_sections").update({
       title: form.title,
       subtitle: form.subtitle,
       content: { description: form.description, email: form.email, cta_text: form.cta_text },
