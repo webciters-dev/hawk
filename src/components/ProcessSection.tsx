@@ -1,21 +1,23 @@
 import { motion } from "framer-motion";
 import { useProcessSteps, useSiteSection } from "@/hooks/use-cms-data";
 
-const ProcessSection = () => {
+const ProcessSection = ({ showHeader = true }: { showHeader?: boolean }) => {
   const { data: steps } = useProcessSteps();
   const { data: section } = useSiteSection("process");
 
   return (
     <section id="process" className="py-28 bg-card">
       <div className="container mx-auto px-6 lg:px-12">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="mb-20">
-          <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
-            {section?.subtitle || "Our Process"}
-          </p>
-          <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground">
-            {section?.title || "How we work"}
-          </h2>
-        </motion.div>
+        {showHeader && (
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="mb-20">
+            <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
+              {section?.subtitle || "Our Process"}
+            </p>
+            <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground">
+              {section?.title || "How we work"}
+            </h2>
+          </motion.div>
+        )}
 
         <div className="grid md:grid-cols-4 gap-12">
           {steps?.map((step, i) => (

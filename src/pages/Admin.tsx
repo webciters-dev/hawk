@@ -285,27 +285,33 @@ const HeroPanel = () => {
 
 // ─── SERVICES PANEL ───
 const ServicesPanel = () => {
-  const { data: services, refetch } = useServiceItems();
+  const { data: services, refetch: refetchItems } = useServiceItems();
+  const { data: section, refetch: refetchSection } = useSiteSection("services");
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
+  const [pageDesc, setPageDesc] = useState("");
 
   useEffect(() => { if (services) setItems(services); }, [services]);
+  useEffect(() => { if (section) setPageDesc((section.content as any)?.page_description || ""); }, [section]);
 
   const save = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
+    if (section) {
+      const existing = (section.content as any) || {};
+      await client.from("site_sections").update({ content: { ...existing, page_description: pageDesc } }).eq("id", section.id);
+    }
     for (const item of items) {
       await client.from("service_items").upsert({ id: item.id, title: item.title, description: item.description, icon_name: item.icon_name, sort_order: item.sort_order });
     }
-    await refetch();
+    await refetchItems();
+    await refetchSection();
     toast({ title: "Saved", description: "Services updated." });
   };
 
   const add = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     const { data } = await client.from("service_items").insert({ title: "New Service", description: "Description here", icon_name: "Target", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
@@ -313,7 +319,6 @@ const ServicesPanel = () => {
   const remove = async (id: string) => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     await client.from("service_items").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
@@ -330,6 +335,10 @@ const ServicesPanel = () => {
           <Button variant="cleanOutline" size="sm" onClick={add}><Plus size={14} /> Add</Button>
           <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
         </div>
+      </div>
+      <div className="space-y-2">
+        <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Page Description (shown on /services page hero)</label>
+        <Textarea value={pageDesc} onChange={(e) => setPageDesc(e.target.value)} rows={3} placeholder="Introductory paragraph for the services page..." />
       </div>
       {items.map((s) => (
         <div key={s.id} className="border border-border rounded-sm p-4 space-y-3">
@@ -406,27 +415,33 @@ const StatisticsPanel = () => {
 
 // ─── ABOUT PANEL ───
 const AboutPanel = () => {
-  const { data: members, refetch } = useTeamMembers();
+  const { data: members, refetch: refetchMembers } = useTeamMembers();
+  const { data: section, refetch: refetchSection } = useSiteSection("about");
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
+  const [pageDesc, setPageDesc] = useState("");
 
   useEffect(() => { if (members) setItems(members); }, [members]);
+  useEffect(() => { if (section) setPageDesc((section.content as any)?.page_description || ""); }, [section]);
 
   const save = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
+    if (section) {
+      const existing = (section.content as any) || {};
+      await client.from("site_sections").update({ content: { ...existing, page_description: pageDesc } }).eq("id", section.id);
+    }
     for (const item of items) {
       await client.from("team_members").upsert({ id: item.id, name: item.name, role: item.role, bio: item.bio, bio_extended: item.bio_extended, image_url: item.image_url, linkedin_url: item.linkedin_url, sort_order: item.sort_order });
     }
-    await refetch();
+    await refetchMembers();
+    await refetchSection();
     toast({ title: "Saved", description: "About section updated." });
   };
 
   const add = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     const { data } = await client.from("team_members").insert({ name: "New Member", role: "Role", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
@@ -434,7 +449,6 @@ const AboutPanel = () => {
   const remove = async (id: string) => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     await client.from("team_members").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
@@ -451,6 +465,10 @@ const AboutPanel = () => {
           <Button variant="cleanOutline" size="sm" onClick={add}><Plus size={14} /> Add</Button>
           <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
         </div>
+      </div>
+      <div className="space-y-2">
+        <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Page Description (shown on /about page hero)</label>
+        <Textarea value={pageDesc} onChange={(e) => setPageDesc(e.target.value)} rows={3} placeholder="Introductory paragraph for the about page..." />
       </div>
       {items.map((m) => (
         <div key={m.id} className="border border-border rounded-sm p-4 space-y-3">
@@ -473,27 +491,33 @@ const AboutPanel = () => {
 
 // ─── PROCESS PANEL ───
 const ProcessPanel = () => {
-  const { data: steps, refetch } = useProcessSteps();
+  const { data: steps, refetch: refetchItems } = useProcessSteps();
+  const { data: section, refetch: refetchSection } = useSiteSection("process");
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
+  const [pageDesc, setPageDesc] = useState("");
 
   useEffect(() => { if (steps) setItems(steps); }, [steps]);
+  useEffect(() => { if (section) setPageDesc((section.content as any)?.page_description || ""); }, [section]);
 
   const save = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
+    if (section) {
+      const existing = (section.content as any) || {};
+      await client.from("site_sections").update({ content: { ...existing, page_description: pageDesc } }).eq("id", section.id);
+    }
     for (const item of items) {
       await client.from("process_steps").upsert({ id: item.id, step_number: item.step_number, title: item.title, description: item.description, sort_order: item.sort_order });
     }
-    await refetch();
+    await refetchItems();
+    await refetchSection();
     toast({ title: "Saved", description: "Process steps updated." });
   };
 
   const add = async () => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     const num = String(items.length + 1).padStart(2, "0");
     const { data } = await client.from("process_steps").insert({ step_number: num, title: "New Step", description: "Description here", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
@@ -502,7 +526,6 @@ const ProcessPanel = () => {
   const remove = async (id: string) => {
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     await client.from("process_steps").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
@@ -519,6 +542,10 @@ const ProcessPanel = () => {
           <Button variant="cleanOutline" size="sm" onClick={add}><Plus size={14} /> Add</Button>
           <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
         </div>
+      </div>
+      <div className="space-y-2">
+        <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Page Description (shown on /process page hero)</label>
+        <Textarea value={pageDesc} onChange={(e) => setPageDesc(e.target.value)} rows={3} placeholder="Introductory paragraph for the process page..." />
       </div>
       {items.map((s) => (
         <div key={s.id} className="border border-border rounded-sm p-4 space-y-3">
@@ -538,25 +565,23 @@ const ProcessPanel = () => {
 const ContactPanel = () => {
   const { data: section, refetch } = useSiteSection("contact");
   const { toast } = useToast();
-  const [form, setForm] = useState({ title: "", subtitle: "", description: "", email: "", cta_text: "" });
+  const [form, setForm] = useState({ title: "", subtitle: "", description: "", email: "", cta_text: "", page_description: "" });
 
   useEffect(() => {
     if (section) {
       const c = section.content as any;
-      setForm({ title: section.title || "", subtitle: section.subtitle || "", description: c?.description || "", email: c?.email || "", cta_text: c?.cta_text || "" });
+      setForm({ title: section.title || "", subtitle: section.subtitle || "", description: c?.description || "", email: c?.email || "", cta_text: c?.cta_text || "", page_description: c?.page_description || "" });
     }
   }, [section]);
 
   const save = async () => {
     if (!section) return;
-
     const client = await getClientOrToast(toast);
     if (!client) return;
-
     await client.from("site_sections").update({
       title: form.title,
       subtitle: form.subtitle,
-      content: { description: form.description, email: form.email, cta_text: form.cta_text },
+      content: { description: form.description, email: form.email, cta_text: form.cta_text, page_description: form.page_description },
     }).eq("id", section.id);
     await refetch();
     toast({ title: "Saved", description: "Contact section updated." });
@@ -568,6 +593,8 @@ const ContactPanel = () => {
         <h2 className="font-display text-lg text-foreground">Contact Section</h2>
         <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
       </div>
+      <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Page Description (shown on /contact page hero)</label>
+      <Textarea value={form.page_description} onChange={(e) => setForm({ ...form, page_description: e.target.value })} rows={3} placeholder="Introductory paragraph for the contact page..." />
       <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Tagline</label>
       <Input value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} />
       <label className="block font-body text-xs text-muted-foreground uppercase tracking-wider">Headline</label>
