@@ -1,4 +1,4 @@
-import hawkLogo from "@/assets/hawk-logo-redesigned.png";
+import hawkLogo from "@/assets/hawk-logo-eye.png";
 
 const Footer = () => {
   return (
@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center">
-            <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-8 object-contain" />
+            <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-10 object-contain" />
           </div>
           <div className="flex items-center gap-8">
             {["Services", "About", "Process", "Contact"].map((item) => (

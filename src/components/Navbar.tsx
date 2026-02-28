@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import hawkLogo from "@/assets/hawk-logo-redesigned.png";
+import hawkLogo from "@/assets/hawk-logo-eye.png";
 
 const navItems = [
   { label: "Services", href: "#services" },
@@ -27,7 +27,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between h-20 px-6 lg:px-12">
         <a href="#" className="flex items-center">
-          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-12 object-contain" />
+          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-16 object-contain" />
         </a>
 
         {/* Desktop nav */}
