@@ -27,7 +27,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between h-20 px-6 lg:px-12">
         <a href="#" className="flex items-center">
-          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-12 object-contain" />
+          <img src={hawkLogo} alt="Hawk Vision Strategies" className="h-16 object-contain" />
         </a>
 
         {/* Desktop nav */}
