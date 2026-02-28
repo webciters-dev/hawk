@@ -15,7 +15,7 @@ const AdminLogin = () => {
 
   useEffect(() => {
     if (!loading && user && isAdmin) {
-      navigate("/admin");
+      navigate("/admin", { replace: true });
     }
   }, [loading, user, isAdmin, navigate]);
 
@@ -23,11 +23,17 @@ const AdminLogin = () => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
-    const { error: err } = await signIn(email, password);
-    if (err) {
-      setError(err.message);
+
+    try {
+      const { error: err } = await signIn(email, password);
+      if (err) {
+        setError(err.message);
+      }
+    } catch {
+      setError("Unable to sign in right now. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><p className="text-muted-foreground">Loading...</p></div>;
