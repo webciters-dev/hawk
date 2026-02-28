@@ -454,9 +454,10 @@ const AboutPanel = () => {
       </div>
       {items.map((m) => (
         <div key={m.id} className="border border-border rounded-sm p-4 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <Input value={m.name} onChange={(e) => update(m.id, "name", e.target.value)} placeholder="Name" />
-            <Input value={m.role || ""} onChange={(e) => update(m.id, "role", e.target.value)} placeholder="Role" />
+          <div className="flex items-center gap-3">
+            <Input className="flex-1" value={m.name} onChange={(e) => update(m.id, "name", e.target.value)} placeholder="Name" />
+            <Input className="flex-1" value={m.role || ""} onChange={(e) => update(m.id, "role", e.target.value)} placeholder="Role" />
+            <Button variant="ghost" size="icon" onClick={() => remove(m.id)}><Trash2 size={14} /></Button>
           </div>
           <Input value={m.linkedin_url || ""} onChange={(e) => update(m.id, "linkedin_url", e.target.value)} placeholder="LinkedIn URL" />
           <Input value={m.image_url || ""} onChange={(e) => update(m.id, "image_url", e.target.value)} placeholder="Image URL" />
