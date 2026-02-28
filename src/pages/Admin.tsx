@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
-import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getBackendClient } from "@/lib/backend-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +10,20 @@ import { useNavigationLinks, useStatistics, useServiceItems, useProcessSteps, us
 import { useToast } from "@/hooks/use-toast";
 
 type Tab = "navigation" | "hero" | "services" | "about" | "process" | "contact" | "statistics";
+
+const getClientOrToast = async (toast: ReturnType<typeof useToast>["toast"]) => {
+  const client = await getBackendClient();
+  if (!client) {
+    toast({
+      title: "Backend unavailable",
+      description: "Please refresh and try again.",
+      variant: "destructive",
+    });
+    return null;
+  }
+
+  return client;
+};
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdminAuth();
@@ -102,8 +115,11 @@ const NavigationPanel = () => {
   useEffect(() => { if (links) setItems(links); }, [links]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("navigation_links").upsert({
+      await client.from("navigation_links").upsert({
         id: item.id,
         title: item.title,
         url: item.url,
@@ -117,7 +133,10 @@ const NavigationPanel = () => {
   };
 
   const addLink = async () => {
-    const { data } = await supabase.from("navigation_links").insert({
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("navigation_links").insert({
       title: "New Link",
       url: "#",
       sort_order: (items?.length || 0) + 1,
@@ -126,7 +145,10 @@ const NavigationPanel = () => {
   };
 
   const addSublink = async (parentId: string) => {
-    const { data } = await supabase.from("navigation_links").insert({
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("navigation_links").insert({
       title: "New Sublink",
       url: "#",
       parent_id: parentId,
@@ -136,7 +158,10 @@ const NavigationPanel = () => {
   };
 
   const removeLink = async (id: string) => {
-    await supabase.from("navigation_links").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("navigation_links").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id && i.parent_id !== id));
   };
 
@@ -209,7 +234,11 @@ const HeroPanel = () => {
 
   const save = async () => {
     if (!section) return;
-    await supabase.from("site_sections").update({
+
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("site_sections").update({
       title: form.title,
       subtitle: form.subtitle,
       content: { description: form.description, cta_primary_text: form.cta_primary_text, cta_primary_url: form.cta_primary_url, cta_secondary_text: form.cta_secondary_text, cta_secondary_url: form.cta_secondary_url },
@@ -263,20 +292,29 @@ const ServicesPanel = () => {
   useEffect(() => { if (services) setItems(services); }, [services]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("service_items").upsert({ id: item.id, title: item.title, description: item.description, icon_name: item.icon_name, sort_order: item.sort_order });
+      await client.from("service_items").upsert({ id: item.id, title: item.title, description: item.description, icon_name: item.icon_name, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "Services updated." });
   };
 
   const add = async () => {
-    const { data } = await supabase.from("service_items").insert({ title: "New Service", description: "Description here", icon_name: "Target", sort_order: items.length + 1 }).select().single();
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("service_items").insert({ title: "New Service", description: "Description here", icon_name: "Target", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
 
   const remove = async (id: string) => {
-    await supabase.from("service_items").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("service_items").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
 
@@ -316,20 +354,29 @@ const StatisticsPanel = () => {
   useEffect(() => { if (stats) setItems(stats); }, [stats]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("statistics").upsert({ id: item.id, metric_value: item.metric_value, metric_label: item.metric_label, sort_order: item.sort_order });
+      await client.from("statistics").upsert({ id: item.id, metric_value: item.metric_value, metric_label: item.metric_label, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "Statistics updated." });
   };
 
   const add = async () => {
-    const { data } = await supabase.from("statistics").insert({ metric_value: "0", metric_label: "New Metric", sort_order: items.length + 1 }).select().single();
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("statistics").insert({ metric_value: "0", metric_label: "New Metric", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
 
   const remove = async (id: string) => {
-    await supabase.from("statistics").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("statistics").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
 
@@ -366,8 +413,11 @@ const AboutPanel = () => {
   useEffect(() => { if (members) setItems(members); }, [members]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("team_members").upsert({ id: item.id, name: item.name, role: item.role, bio: item.bio, bio_extended: item.bio_extended, image_url: item.image_url, linkedin_url: item.linkedin_url, sort_order: item.sort_order });
+      await client.from("team_members").upsert({ id: item.id, name: item.name, role: item.role, bio: item.bio, bio_extended: item.bio_extended, image_url: item.image_url, linkedin_url: item.linkedin_url, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "About section updated." });
@@ -410,21 +460,30 @@ const ProcessPanel = () => {
   useEffect(() => { if (steps) setItems(steps); }, [steps]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("process_steps").upsert({ id: item.id, step_number: item.step_number, title: item.title, description: item.description, sort_order: item.sort_order });
+      await client.from("process_steps").upsert({ id: item.id, step_number: item.step_number, title: item.title, description: item.description, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "Process steps updated." });
   };
 
   const add = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     const num = String(items.length + 1).padStart(2, "0");
-    const { data } = await supabase.from("process_steps").insert({ step_number: num, title: "New Step", description: "Description here", sort_order: items.length + 1 }).select().single();
+    const { data } = await client.from("process_steps").insert({ step_number: num, title: "New Step", description: "Description here", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
 
   const remove = async (id: string) => {
-    await supabase.from("process_steps").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("process_steps").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
 
@@ -470,7 +529,11 @@ const ContactPanel = () => {
 
   const save = async () => {
     if (!section) return;
-    await supabase.from("site_sections").update({
+
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("site_sections").update({
       title: form.title,
       subtitle: form.subtitle,
       content: { description: form.description, email: form.email, cta_text: form.cta_text },
