@@ -1,12 +1,23 @@
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { useNavigationLinks } from "@/hooks/use-cms-data";
+import { useNavigationLinks, type NavigationLink } from "@/hooks/use-cms-data";
 import hawkLogo from "@/assets/logo.png";
+
+type NavRenderableLink = Pick<NavigationLink, "id" | "title" | "url" | "parent_id" | "is_cta">;
+
+const FALLBACK_NAV_LINKS: NavRenderableLink[] = [
+  { id: "fallback-services", title: "Services", url: "#services", parent_id: null, is_cta: false },
+  { id: "fallback-about", title: "About", url: "#about", parent_id: null, is_cta: false },
+  { id: "fallback-process", title: "Process", url: "#process", parent_id: null, is_cta: false },
+  { id: "fallback-contact", title: "Contact Us", url: "#contact", parent_id: null, is_cta: true },
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data: links } = useNavigationLinks();
+
+  const navLinks: NavRenderableLink[] = links && links.length > 0 ? links : FALLBACK_NAV_LINKS;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -14,10 +25,9 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const topLinks = links?.filter((l) => !l.parent_id && !l.is_cta) || [];
-  const ctaLink = links?.find((l) => l.is_cta && !l.parent_id);
-  const getChildren = (parentId: string) => links?.filter((l) => l.parent_id === parentId) || [];
-
+  const topLinks = navLinks.filter((l) => !l.parent_id && !l.is_cta);
+  const ctaLink = navLinks.find((l) => l.is_cta && !l.parent_id);
+  const getChildren = (parentId: string) => navLinks.filter((l) => l.parent_id === parentId);
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
