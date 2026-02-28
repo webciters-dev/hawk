@@ -1,28 +1,44 @@
-import type { supabase as SupabaseClientInstance } from "@/integrations/supabase/client";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
-export type BackendClient = typeof SupabaseClientInstance;
+export type BackendClient = SupabaseClient<Database>;
 
 let backendClientPromise: Promise<BackendClient> | null = null;
 
-const hasBackendConfig = () => {
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-  return Boolean(url && key);
-};
+// Publishable fallback config for this Lovable Cloud project (safe to expose client-side).
+const FALLBACK_BACKEND_URL = "https://ddundocjeacxkkepbnvb.supabase.co";
+const FALLBACK_BACKEND_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdW5kb2NqZWFjeGtrZXBibnZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNzM1NTQsImV4cCI6MjA4Nzg0OTU1NH0.yfTIt1xTwcDhhqig9MQazpsfDCrVxqRew9KTj0QSHqg";
 
-const loadBackendClient = async (): Promise<BackendClient> => {
-  const { supabase } = await import("@/integrations/supabase/client");
-  return supabase;
-};
+const getRuntimeConfig = () => {
+  const url = import.meta.env.VITE_SUPABASE_URL || FALLBACK_BACKEND_URL;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || FALLBACK_BACKEND_PUBLISHABLE_KEY;
 
-export const getBackendClient = async (): Promise<BackendClient | null> => {
-  if (!hasBackendConfig()) {
-    console.error("Backend config is missing. Check environment setup.");
+  if (!url || !key) {
     return null;
   }
 
+  return { url, key };
+};
+
+const createRuntimeClient = (): BackendClient => {
+  const config = getRuntimeConfig();
+  if (!config) {
+    throw new Error("Backend runtime config is missing.");
+  }
+
+  return createClient<Database>(config.url, config.key, {
+    auth: {
+      storage: localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+};
+
+export const getBackendClient = async (): Promise<BackendClient | null> => {
   if (!backendClientPromise) {
-    backendClientPromise = loadBackendClient();
+    backendClientPromise = Promise.resolve(createRuntimeClient());
   }
 
   try {
