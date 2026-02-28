@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [callbackMessage, setCallbackMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [forceReady, setForceReady] = useState(false);
   const { signIn, isAdmin, loading, user } = useAdminAuth();
@@ -22,9 +22,10 @@ const AdminLogin = () => {
 
   useEffect(() => {
     const timer = window.setTimeout(() => setForceReady(true), 2500);
+    const currentUrl = new URL(window.location.href);
+    const searchParams = currentUrl.searchParams;
+    const hashParams = new URLSearchParams(currentUrl.hash.replace(/^#/, ""));
 
-    const searchParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const hasAuthCallbackParams =
       searchParams.get("type") === "signup" ||
       hashParams.get("type") === "signup" ||
@@ -33,11 +34,21 @@ const AdminLogin = () => {
       Boolean(searchParams.get("error")) ||
       Boolean(hashParams.get("access_token"));
 
-    if (searchParams.get("error") || hashParams.get("error_description")) {
-      const message = searchParams.get("error_description") || hashParams.get("error_description") || "Email callback was invalid. Please sign in manually.";
-      setError(message);
-    } else if (hasAuthCallbackParams) {
-      setError("Email confirmed. Please sign in with your password.");
+    if (hasAuthCallbackParams) {
+      const rawError =
+        searchParams.get("error_description") ||
+        hashParams.get("error_description") ||
+        searchParams.get("error") ||
+        "";
+
+      if (rawError) {
+        const normalizedError = decodeURIComponent(rawError.replace(/\+/g, " "));
+        setError(normalizedError);
+      } else {
+        setCallbackMessage("Email confirmed. Please sign in with your password.");
+      }
+
+      window.history.replaceState({}, document.title, currentUrl.pathname);
     }
 
     return () => window.clearTimeout(timer);
@@ -46,6 +57,7 @@ const AdminLogin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setCallbackMessage("");
     setSubmitting(true);
 
     try {
@@ -90,6 +102,7 @@ const AdminLogin = () => {
             required
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {!error && callbackMessage && <p className="text-sm text-muted-foreground">{callbackMessage}</p>}
           <Button type="submit" className="w-full" variant="clean" disabled={submitting}>
             {submitting ? "Signing in..." : "Sign In"}
           </Button>
