@@ -413,8 +413,11 @@ const AboutPanel = () => {
   useEffect(() => { if (members) setItems(members); }, [members]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("team_members").upsert({ id: item.id, name: item.name, role: item.role, bio: item.bio, bio_extended: item.bio_extended, image_url: item.image_url, linkedin_url: item.linkedin_url, sort_order: item.sort_order });
+      await client.from("team_members").upsert({ id: item.id, name: item.name, role: item.role, bio: item.bio, bio_extended: item.bio_extended, image_url: item.image_url, linkedin_url: item.linkedin_url, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "About section updated." });
