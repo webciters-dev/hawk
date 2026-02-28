@@ -17,13 +17,14 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { data: links } = useNavigationLinks();
 
-  const navLinks: NavRenderableLink[] = links && links.length > 0 ? links : FALLBACK_NAV_LINKS;
+  const normalizedLinks = (links ?? []).filter((link) => Boolean(link.title?.trim()));
+  const candidateTopLinks = normalizedLinks.filter((l) => !l.parent_id && !l.is_cta);
+  const candidateCta = normalizedLinks.find((l) => l.is_cta && !l.parent_id);
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const navLinks: NavRenderableLink[] =
+    candidateTopLinks.length > 0 || Boolean(candidateCta)
+      ? normalizedLinks
+      : FALLBACK_NAV_LINKS;
 
   const topLinks = navLinks.filter((l) => !l.parent_id && !l.is_cta);
   const ctaLink = navLinks.find((l) => l.is_cta && !l.parent_id);
