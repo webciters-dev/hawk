@@ -292,20 +292,29 @@ const ServicesPanel = () => {
   useEffect(() => { if (services) setItems(services); }, [services]);
 
   const save = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
     for (const item of items) {
-      await supabase.from("service_items").upsert({ id: item.id, title: item.title, description: item.description, icon_name: item.icon_name, sort_order: item.sort_order });
+      await client.from("service_items").upsert({ id: item.id, title: item.title, description: item.description, icon_name: item.icon_name, sort_order: item.sort_order });
     }
     await refetch();
     toast({ title: "Saved", description: "Services updated." });
   };
 
   const add = async () => {
-    const { data } = await supabase.from("service_items").insert({ title: "New Service", description: "Description here", icon_name: "Target", sort_order: items.length + 1 }).select().single();
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("service_items").insert({ title: "New Service", description: "Description here", icon_name: "Target", sort_order: items.length + 1 }).select().single();
     if (data) setItems([...items, data]);
   };
 
   const remove = async (id: string) => {
-    await supabase.from("service_items").delete().eq("id", id);
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("service_items").delete().eq("id", id);
     setItems(items.filter(i => i.id !== id));
   };
 
