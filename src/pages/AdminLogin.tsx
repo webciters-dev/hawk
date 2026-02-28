@@ -10,6 +10,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [forceReady, setForceReady] = useState(false);
   const { signIn, isAdmin, loading, user } = useAdminAuth();
   const navigate = useNavigate();
 
@@ -18,6 +19,24 @@ const AdminLogin = () => {
       navigate("/admin", { replace: true });
     }
   }, [loading, user, isAdmin, navigate]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setForceReady(true), 2500);
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const hasAuthCallbackParams =
+      searchParams.get("type") === "signup" ||
+      hashParams.get("type") === "signup" ||
+      Boolean(searchParams.get("token_hash")) ||
+      Boolean(hashParams.get("access_token"));
+
+    if (hasAuthCallbackParams) {
+      setError("Email confirmed. Please sign in with your password.");
+    }
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +55,13 @@ const AdminLogin = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><p className="text-muted-foreground">Loading...</p></div>;
+  if (loading && !forceReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-foreground">Preparing admin login...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
