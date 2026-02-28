@@ -423,6 +423,22 @@ const AboutPanel = () => {
     toast({ title: "Saved", description: "About section updated." });
   };
 
+  const add = async () => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    const { data } = await client.from("team_members").insert({ name: "New Member", role: "Role", sort_order: items.length + 1 }).select().single();
+    if (data) setItems([...items, data]);
+  };
+
+  const remove = async (id: string) => {
+    const client = await getClientOrToast(toast);
+    if (!client) return;
+
+    await client.from("team_members").delete().eq("id", id);
+    setItems(items.filter(i => i.id !== id));
+  };
+
   const update = (id: string, field: string, value: string) => {
     setItems(items.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
@@ -431,7 +447,10 @@ const AboutPanel = () => {
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg text-foreground">About / Team</h2>
-        <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
+        <div className="flex gap-2">
+          <Button variant="cleanOutline" size="sm" onClick={add}><Plus size={14} /> Add</Button>
+          <Button variant="clean" size="sm" onClick={save}><Save size={14} /> Save</Button>
+        </div>
       </div>
       {items.map((m) => (
         <div key={m.id} className="border border-border rounded-sm p-4 space-y-3">
