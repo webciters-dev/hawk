@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Component, type ErrorInfo, type ReactNode } from "react";
 import App from "./App.tsx";
 import "./index.css";
 
@@ -14,6 +14,38 @@ const RuntimeFallback = ({ message }: { message: string }) => (
     </div>
   </div>
 );
+
+class RootErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; message: string }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = {
+      hasError: false,
+      message: "The page hit an unexpected error. Please reload and try again.",
+    };
+  }
+
+  static getDerivedStateFromError(error: unknown) {
+    return {
+      hasError: true,
+      message:
+        error instanceof Error
+          ? `A runtime error occurred: ${error.message}`
+          : "The page hit an unexpected error. Please reload and try again.",
+    };
+  }
+
+  componentDidCatch(error: unknown, errorInfo: ErrorInfo) {
+    console.error("Root error boundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <RuntimeFallback message={this.state.message} />;
+    }
+
+    return this.props.children;
+  }
+}
 
 const AppRuntimeGuard = () => {
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
@@ -46,4 +78,12 @@ const AppRuntimeGuard = () => {
   return <App />;
 };
 
-createRoot(document.getElementById("root")!).render(<AppRuntimeGuard />);
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  createRoot(rootElement).render(
+    <RootErrorBoundary>
+      <AppRuntimeGuard />
+    </RootErrorBoundary>,
+  );
+}
