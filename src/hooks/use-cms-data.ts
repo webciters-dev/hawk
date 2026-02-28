@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getBackendClient } from "@/lib/backend-client";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type NavigationLink = Tables<"navigation_links">;
@@ -13,7 +13,9 @@ export const useNavigationLinks = () =>
   useQuery({
     queryKey: ["navigation_links"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = await getBackendClient();
+      if (!client) return [] as NavigationLink[];
+      const { data, error } = await client
         .from("navigation_links")
         .select("*")
         .order("sort_order");
@@ -26,7 +28,9 @@ export const useSiteSection = (key: string) =>
   useQuery({
     queryKey: ["site_sections", key],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = await getBackendClient();
+      if (!client) return null;
+      const { data, error } = await client
         .from("site_sections")
         .select("*")
         .eq("section_key", key)
@@ -40,7 +44,9 @@ export const useStatistics = () =>
   useQuery({
     queryKey: ["statistics"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = await getBackendClient();
+      if (!client) return [] as Statistic[];
+      const { data, error } = await client
         .from("statistics")
         .select("*")
         .order("sort_order");
@@ -53,7 +59,9 @@ export const useTeamMembers = () =>
   useQuery({
     queryKey: ["team_members"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = await getBackendClient();
+      if (!client) return [] as TeamMember[];
+      const { data, error } = await client
         .from("team_members")
         .select("*")
         .order("sort_order");
@@ -66,7 +74,9 @@ export const useServiceItems = () =>
   useQuery({
     queryKey: ["service_items"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = await getBackendClient();
+      if (!client) return [] as ServiceItem[];
+      const { data, error } = await client
         .from("service_items")
         .select("*")
         .order("sort_order");
@@ -79,7 +89,9 @@ export const useProcessSteps = () =>
   useQuery({
     queryKey: ["process_steps"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const client = await getBackendClient();
+      if (!client) return [] as ProcessStep[];
+      const { data, error } = await client
         .from("process_steps")
         .select("*")
         .order("sort_order");
