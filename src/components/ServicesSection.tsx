@@ -28,54 +28,49 @@ const services = [
   },
 ];
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.15 },
-  }),
-};
-
 const ServicesSection = () => {
   return (
-    <section id="services" className="py-24 bg-background">
-      <div className="container mx-auto px-6">
+    <section id="services" className="py-28 bg-card">
+      <div className="container mx-auto px-6 lg:px-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.8 }}
+          className="mb-20"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4 font-medium">
-            What We Do
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground">
+          <p className="text-crimson font-body text-xs tracking-[0.3em] uppercase mb-4 font-medium">
             Our Services
+          </p>
+          <h2 className="font-display text-3xl md:text-4xl font-normal text-foreground">
+            Technical knowledge built from<br />
+            well-rounded experience
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-x-16 gap-y-16 max-w-4xl">
           {services.map((service, i) => (
             <motion.div
               key={service.title}
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              variants={fadeInUp}
-              className="group p-8 rounded-lg border border-border bg-card hover:border-gold/30 transition-all duration-500 hover:shadow-lg"
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              className="group"
             >
-              <div className="w-14 h-14 rounded-lg bg-navy flex items-center justify-center mb-6 group-hover:bg-gold transition-colors duration-500">
-                <service.icon className="text-gold group-hover:text-navy-dark transition-colors duration-500" size={26} />
+              <div className="flex items-start gap-5">
+                <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-border group-hover:border-primary transition-colors duration-300">
+                  <service.icon className="text-crimson" size={20} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-medium text-foreground mb-3">
+                    {service.title}
+                  </h3>
+                  <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
               </div>
-              <h3 className="font-display text-2xl font-semibold text-foreground mb-3">
-                {service.title}
-              </h3>
-              <p className="font-body text-muted-foreground leading-relaxed">
-                {service.description}
-              </p>
             </motion.div>
           ))}
         </div>
