@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CookieConsent from "@/components/CookieConsent";
 
 const lazyWithRetry = <T extends ComponentType<any>>(
   importer: () => Promise<{ default: T }>,
@@ -40,6 +41,7 @@ const NotFound = lazyWithRetry(() => import("./pages/NotFound"), "retry-route-no
 const DynamicPage = lazyWithRetry(() => import("./pages/DynamicPage"), "retry-route-dynamic");
 const AdminLogin = lazyWithRetry(() => import("./pages/AdminLogin"), "retry-route-admin-login");
 const Admin = lazyWithRetry(() => import("./pages/Admin"), "retry-route-admin");
+const CookiePolicyPage = lazyWithRetry(() => import("./pages/CookiePolicyPage"), "retry-route-cookie-policy");
 
 const queryClient = new QueryClient();
 
@@ -62,12 +64,14 @@ const App = () => (
             <Route path="/about" element={<AboutPage />} />
             <Route path="/process" element={<ProcessPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/cookie-policy" element={<CookiePolicyPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/:slug" element={<DynamicPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        <CookieConsent />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
