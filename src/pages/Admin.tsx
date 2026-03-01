@@ -102,6 +102,7 @@ const Admin = () => {
         {activeTab === "about" && <AboutPanel />}
         {activeTab === "process" && <ProcessPanel />}
         {activeTab === "contact" && <ContactPanel />}
+        {activeTab === "pages" && <PagesPanel />}
       </div>
     </div>
   );
