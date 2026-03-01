@@ -46,6 +46,7 @@ export const usePage = (slug: string) =>
         .from("pages")
         .select("*")
         .eq("slug", slug)
+        .eq("is_published", true)
         .maybeSingle();
       if (error) throw error;
       return data as unknown as Page | null;
