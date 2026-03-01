@@ -55,6 +55,45 @@ export type Database = {
           },
         ]
       }
+      pages: {
+        Row: {
+          content: Json
+          created_at: string
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          is_published: boolean
+          slug: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          is_published?: boolean
+          slug: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          is_published?: boolean
+          slug?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       process_steps: {
         Row: {
           created_at: string

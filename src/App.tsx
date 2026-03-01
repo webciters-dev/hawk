@@ -37,6 +37,7 @@ const AboutPage = lazyWithRetry(() => import("./pages/AboutPage"), "retry-route-
 const ProcessPage = lazyWithRetry(() => import("./pages/ProcessPage"), "retry-route-process");
 const ContactPage = lazyWithRetry(() => import("./pages/ContactPage"), "retry-route-contact");
 const NotFound = lazyWithRetry(() => import("./pages/NotFound"), "retry-route-not-found");
+const DynamicPage = lazyWithRetry(() => import("./pages/DynamicPage"), "retry-route-dynamic");
 const AdminLogin = lazyWithRetry(() => import("./pages/AdminLogin"), "retry-route-admin-login");
 const Admin = lazyWithRetry(() => import("./pages/Admin"), "retry-route-admin");
 
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/:slug" element={<DynamicPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
