@@ -130,7 +130,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     healthcheck:
-      test: pg_isready -U postgres -h localhost
+      test: pg_isready -U supabase_admin -h localhost
       interval: 5s
       timeout: 5s
       retries: 10
@@ -146,7 +146,6 @@ services:
       JWT_EXP: ${JWT_EXPIRY:-3600}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./volumes/db/init:/docker-entrypoint-initdb.d:ro
     command:
       - postgres
       - -c
