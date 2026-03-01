@@ -27,6 +27,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data: links } = useNavigationLinks();
+  const { data: pages } = usePages();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -34,7 +35,14 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const normalizedLinks = (links ?? []).filter((link) => Boolean(link.title?.trim()));
+  // Build a set of slugs for unpublished pages
+  const unpublishedSlugs = new Set(
+    (pages ?? []).filter((p) => !p.is_published).map((p) => `/${p.slug}`)
+  );
+
+  const normalizedLinks = (links ?? [])
+    .filter((link) => Boolean(link.title?.trim()))
+    .filter((link) => !unpublishedSlugs.has(link.url));
   const candidateTopLinks = normalizedLinks.filter((l) => !l.parent_id && !l.is_cta);
   const candidateCta = normalizedLinks.find((l) => l.is_cta && !l.parent_id);
 
