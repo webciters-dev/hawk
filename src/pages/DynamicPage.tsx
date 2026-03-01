@@ -77,7 +77,7 @@ const DynamicPage = () => {
       <Navbar />
       <PageHero
         title={page.hero_title || page.title}
-        subtitle={page.hero_subtitle || page.subtitle || undefined}
+        description={page.hero_subtitle || page.subtitle || undefined}
       />
 
       <section className="py-20 bg-background">
