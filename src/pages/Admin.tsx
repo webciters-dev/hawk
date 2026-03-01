@@ -691,7 +691,7 @@ const PagesPanel = () => {
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => togglePublish(page)} title={page.is_published ? "Unpublish" : "Publish"}>
-              {page.is_published ? <Eye size={14} className="text-green-600" /> : <EyeOff size={14} />}
+              {page.is_published ? <Eye size={14} className="text-primary" /> : <EyeOff size={14} />}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setEditingPage(page)}>Edit</Button>
             <Button variant="ghost" size="icon" onClick={() => deletePage(page.id)}><Trash2 size={14} /></Button>
