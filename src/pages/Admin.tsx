@@ -745,7 +745,7 @@ const PageEditor = ({ page, setPage, onSave, onBack }: { page: any; setPage: (p:
         <button onClick={onBack} className="font-body text-xs text-muted-foreground hover:text-foreground transition-colors">← Back to Pages</button>
         <div className="flex gap-2">
           <Button variant="ghost" size="sm" onClick={() => updateField("is_published", !page.is_published)}>
-            {page.is_published ? <><Eye size={14} className="text-green-600" /> Published</> : <><EyeOff size={14} /> Draft</>}
+            {page.is_published ? <><Eye size={14} className="text-primary" /> Published</> : <><EyeOff size={14} /> Draft</>}
           </Button>
           <Button variant="clean" size="sm" onClick={() => onSave(page)}><Save size={14} /> Save</Button>
         </div>
