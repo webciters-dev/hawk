@@ -702,6 +702,86 @@ const PagesPanel = () => {
   );
 };
 
+// ─── IMAGE BLOCK EDITOR (with upload) ───
+const ImageBlockEditor = ({
+  block,
+  onValueChange,
+  onMetaChange,
+}: {
+  block: any;
+  onValueChange: (val: string) => void;
+  onMetaChange: (key: string, val: string) => void;
+}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const client = await getBackendClient();
+      if (!client) throw new Error("Backend unavailable");
+
+      const ext = file.name.split(".").pop() || "png";
+      const path = `pages/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+      const { error: uploadError } = await client.storage
+        .from("cms-uploads")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = client.storage
+        .from("cms-uploads")
+        .getPublicUrl(path);
+
+      onValueChange(urlData.publicUrl);
+      toast({ title: "Uploaded", description: "Image uploaded successfully." });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        <Input
+          className="flex-1"
+          value={block.value}
+          onChange={(e) => onValueChange(e.target.value)}
+          placeholder="Image URL"
+        />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleUpload}
+        />
+        <Button
+          variant="cleanOutline"
+          size="sm"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+          {uploading ? "Uploading..." : "Upload"}
+        </Button>
+      </div>
+      {block.value && (
+        <img src={block.value} alt={block.meta?.alt || "Preview"} className="max-h-40 rounded-sm object-cover" />
+      )}
+      <Input value={block.meta?.alt || ""} onChange={(e) => onMetaChange("alt", e.target.value)} placeholder="Alt text" />
+      <Input value={block.meta?.caption || ""} onChange={(e) => onMetaChange("caption", e.target.value)} placeholder="Caption (optional)" />
+    </>
+  );
+};
+
 // ─── PAGE EDITOR ───
 const PageEditor = ({ page, setPage, onSave, onBack }: { page: any; setPage: (p: any) => void; onSave: (p: any) => void; onBack: () => void }) => {
   const blocks: any[] = Array.isArray(page.content) ? page.content : [];
