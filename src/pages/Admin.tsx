@@ -9,7 +9,7 @@ import { LogOut, Plus, Trash2, GripVertical, Save, Eye, EyeOff } from "lucide-re
 import { useNavigationLinks, useStatistics, useServiceItems, useProcessSteps, useTeamMembers, useSiteSection } from "@/hooks/use-cms-data";
 import { useToast } from "@/hooks/use-toast";
 
-type Tab = "navigation" | "hero" | "services" | "about" | "process" | "contact" | "statistics";
+type Tab = "navigation" | "hero" | "services" | "about" | "process" | "contact" | "statistics" | "pages";
 
 const getClientOrToast = async (toast: ReturnType<typeof useToast>["toast"]) => {
   const client = await getBackendClient();
