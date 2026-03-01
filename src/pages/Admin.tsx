@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { getBackendClient } from "@/lib/backend-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, Plus, Trash2, GripVertical, Save, Eye, EyeOff } from "lucide-react";
+import { LogOut, Plus, Trash2, GripVertical, Save, Eye, EyeOff, Upload, Loader2 } from "lucide-react";
 import { useNavigationLinks, useStatistics, useServiceItems, useProcessSteps, useTeamMembers, useSiteSection } from "@/hooks/use-cms-data";
 import { useToast } from "@/hooks/use-toast";
 
@@ -702,6 +702,86 @@ const PagesPanel = () => {
   );
 };
 
+// ─── IMAGE BLOCK EDITOR (with upload) ───
+const ImageBlockEditor = ({
+  block,
+  onValueChange,
+  onMetaChange,
+}: {
+  block: any;
+  onValueChange: (val: string) => void;
+  onMetaChange: (key: string, val: string) => void;
+}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const client = await getBackendClient();
+      if (!client) throw new Error("Backend unavailable");
+
+      const ext = file.name.split(".").pop() || "png";
+      const path = `pages/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+      const { error: uploadError } = await client.storage
+        .from("cms-uploads")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = client.storage
+        .from("cms-uploads")
+        .getPublicUrl(path);
+
+      onValueChange(urlData.publicUrl);
+      toast({ title: "Uploaded", description: "Image uploaded successfully." });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        <Input
+          className="flex-1"
+          value={block.value}
+          onChange={(e) => onValueChange(e.target.value)}
+          placeholder="Image URL"
+        />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleUpload}
+        />
+        <Button
+          variant="cleanOutline"
+          size="sm"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+          {uploading ? "Uploading..." : "Upload"}
+        </Button>
+      </div>
+      {block.value && (
+        <img src={block.value} alt={block.meta?.alt || "Preview"} className="max-h-40 rounded-sm object-cover" />
+      )}
+      <Input value={block.meta?.alt || ""} onChange={(e) => onMetaChange("alt", e.target.value)} placeholder="Alt text" />
+      <Input value={block.meta?.caption || ""} onChange={(e) => onMetaChange("caption", e.target.value)} placeholder="Caption (optional)" />
+    </>
+  );
+};
+
 // ─── PAGE EDITOR ───
 const PageEditor = ({ page, setPage, onSave, onBack }: { page: any; setPage: (p: any) => void; onSave: (p: any) => void; onBack: () => void }) => {
   const blocks: any[] = Array.isArray(page.content) ? page.content : [];
@@ -786,11 +866,11 @@ const PageEditor = ({ page, setPage, onSave, onBack }: { page: any; setPage: (p:
               <Textarea value={block.value} onChange={(e) => updateBlock(block.id, "value", e.target.value)} placeholder="Paragraph text..." rows={4} />
             )}
             {block.type === "image" && (
-              <>
-                <Input value={block.value} onChange={(e) => updateBlock(block.id, "value", e.target.value)} placeholder="Image URL" />
-                <Input value={block.meta?.alt || ""} onChange={(e) => updateBlockMeta(block.id, "alt", e.target.value)} placeholder="Alt text" />
-                <Input value={block.meta?.caption || ""} onChange={(e) => updateBlockMeta(block.id, "caption", e.target.value)} placeholder="Caption (optional)" />
-              </>
+              <ImageBlockEditor
+                block={block}
+                onValueChange={(val) => updateBlock(block.id, "value", val)}
+                onMetaChange={(key, val) => updateBlockMeta(block.id, key, val)}
+              />
             )}
             {block.type === "cta" && (
               <>
