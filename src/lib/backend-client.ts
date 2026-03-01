@@ -5,14 +5,9 @@ export type BackendClient = SupabaseClient<Database>;
 
 let backendClientPromise: Promise<BackendClient> | null = null;
 
-// Publishable fallback config for this Lovable Cloud project (safe to expose client-side).
-const FALLBACK_BACKEND_URL = "https://ddundocjeacxkkepbnvb.supabase.co";
-const FALLBACK_BACKEND_PUBLISHABLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdW5kb2NqZWFjeGtrZXBibnZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNzM1NTQsImV4cCI6MjA4Nzg0OTU1NH0.yfTIt1xTwcDhhqig9MQazpsfDCrVxqRew9KTj0QSHqg";
-
 const getRuntimeConfig = () => {
-  const url = import.meta.env.VITE_SUPABASE_URL || FALLBACK_BACKEND_URL;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || FALLBACK_BACKEND_PUBLISHABLE_KEY;
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !key) {
     return null;
