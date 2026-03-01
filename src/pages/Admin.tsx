@@ -58,6 +58,7 @@ const Admin = () => {
     { key: "about", label: "About" },
     { key: "process", label: "Process" },
     { key: "contact", label: "Contact" },
+    { key: "pages", label: "Pages" },
   ];
 
   return (
