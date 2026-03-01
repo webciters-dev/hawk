@@ -35,14 +35,21 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Build a set of slugs for unpublished pages
-  const unpublishedSlugs = new Set(
-    (pages ?? []).filter((p) => !p.is_published).map((p) => `/${p.slug}`)
+  // Build a set of published page slugs (e.g. "/shireen-raza")
+  const publishedSlugs = new Set(
+    (pages ?? []).map((p) => `/${p.slug}`)
   );
+
+  // Static routes that are always valid
+  const staticRoutes = new Set(["/", "/services", "/about", "/process", "/contact", "/admin", "/admin/login"]);
 
   const normalizedLinks = (links ?? [])
     .filter((link) => Boolean(link.title?.trim()))
-    .filter((link) => !unpublishedSlugs.has(link.url));
+    .filter((link) => {
+      // Keep external links, static routes, and links to published pages
+      if (!link.url.startsWith("/") || staticRoutes.has(link.url)) return true;
+      return publishedSlugs.has(link.url);
+    });
   const candidateTopLinks = normalizedLinks.filter((l) => !l.parent_id && !l.is_cta);
   const candidateCta = normalizedLinks.find((l) => l.is_cta && !l.parent_id);
 
