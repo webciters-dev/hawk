@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { getBackendClient } from "@/lib/backend-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, Plus, Trash2, GripVertical, Save, Eye, EyeOff } from "lucide-react";
+import { LogOut, Plus, Trash2, GripVertical, Save, Eye, EyeOff, Upload, Loader2 } from "lucide-react";
 import { useNavigationLinks, useStatistics, useServiceItems, useProcessSteps, useTeamMembers, useSiteSection } from "@/hooks/use-cms-data";
 import { useToast } from "@/hooks/use-toast";
 
