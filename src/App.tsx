@@ -64,6 +64,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/:slug" element={<DynamicPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
