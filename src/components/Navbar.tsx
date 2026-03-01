@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useNavigationLinks, type NavigationLink } from "@/hooks/use-cms-data";
+import { usePublishedPages } from "@/hooks/use-pages";
 import hawkLogo from "@/assets/logo.png";
 
 type NavRenderableLink = Pick<NavigationLink, "id" | "title" | "url" | "parent_id" | "is_cta">;
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data: links } = useNavigationLinks();
+  const { data: pages } = usePublishedPages();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -33,7 +35,21 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const normalizedLinks = (links ?? []).filter((link) => Boolean(link.title?.trim()));
+  // Build a set of published page slugs (e.g. "/shireen-raza")
+  const publishedSlugs = new Set(
+    (pages ?? []).map((p) => `/${p.slug}`)
+  );
+
+  // Static routes that are always valid
+  const staticRoutes = new Set(["/", "/services", "/about", "/process", "/contact", "/admin", "/admin/login"]);
+
+  const normalizedLinks = (links ?? [])
+    .filter((link) => Boolean(link.title?.trim()))
+    .filter((link) => {
+      // Keep external links, static routes, and links to published pages
+      if (!link.url.startsWith("/") || staticRoutes.has(link.url)) return true;
+      return publishedSlugs.has(link.url);
+    });
   const candidateTopLinks = normalizedLinks.filter((l) => !l.parent_id && !l.is_cta);
   const candidateCta = normalizedLinks.find((l) => l.is_cta && !l.parent_id);
 

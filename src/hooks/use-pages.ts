@@ -36,6 +36,23 @@ export const usePages = () =>
     },
   });
 
+/** Returns only published pages — used by public-facing components like the Navbar. */
+export const usePublishedPages = () =>
+  useQuery({
+    queryKey: ["pages", "published"],
+    queryFn: async () => {
+      const client = await getBackendClient();
+      if (!client) return [] as Page[];
+      const { data, error } = await client
+        .from("pages")
+        .select("id,slug,is_published")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as unknown as Page[];
+    },
+  });
+
 export const usePage = (slug: string) =>
   useQuery({
     queryKey: ["pages", slug],
@@ -46,6 +63,7 @@ export const usePage = (slug: string) =>
         .from("pages")
         .select("*")
         .eq("slug", slug)
+        .eq("is_published", true)
         .maybeSingle();
       if (error) throw error;
       return data as unknown as Page | null;
