@@ -786,11 +786,11 @@ const PageEditor = ({ page, setPage, onSave, onBack }: { page: any; setPage: (p:
               <Textarea value={block.value} onChange={(e) => updateBlock(block.id, "value", e.target.value)} placeholder="Paragraph text..." rows={4} />
             )}
             {block.type === "image" && (
-              <>
-                <Input value={block.value} onChange={(e) => updateBlock(block.id, "value", e.target.value)} placeholder="Image URL" />
-                <Input value={block.meta?.alt || ""} onChange={(e) => updateBlockMeta(block.id, "alt", e.target.value)} placeholder="Alt text" />
-                <Input value={block.meta?.caption || ""} onChange={(e) => updateBlockMeta(block.id, "caption", e.target.value)} placeholder="Caption (optional)" />
-              </>
+              <ImageBlockEditor
+                block={block}
+                onValueChange={(val) => updateBlock(block.id, "value", val)}
+                onMetaChange={(key, val) => updateBlockMeta(block.id, key, val)}
+              />
             )}
             {block.type === "cta" && (
               <>
