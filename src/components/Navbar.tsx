@@ -27,7 +27,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data: links } = useNavigationLinks();
-  const { data: pages } = usePages();
+  const { data: pages } = usePublishedPages();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
