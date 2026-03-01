@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useNavigationLinks, type NavigationLink } from "@/hooks/use-cms-data";
-import { usePages } from "@/hooks/use-pages";
+import { usePublishedPages } from "@/hooks/use-pages";
 import hawkLogo from "@/assets/logo.png";
 
 type NavRenderableLink = Pick<NavigationLink, "id" | "title" | "url" | "parent_id" | "is_cta">;
