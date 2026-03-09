@@ -311,9 +311,17 @@ EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 -- ══════════════════════════════════════════════════════════════
--- Grant PostgREST access to the has_role function
+-- Grant PostgREST access
 -- ══════════════════════════════════════════════════════════════
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
+-- Anon only needs to read; RLS still enforces row-level checks,
+-- but this prevents writes even if a table accidentally lacks a policy.
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO anon;
+
+-- Authenticated users (admins) need full access; RLS gates every operation.
+GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+
 GRANT EXECUTE ON FUNCTION public.has_role TO anon, authenticated;
